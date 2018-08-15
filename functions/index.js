@@ -11,8 +11,8 @@ exports.setLoc = functions.https.onRequest((req, res) => {
                 "location": q.location,
                 "locId": q.locId
             }
-
-            console.log("Request: "+ JSON.stringify(reqres));
+            
+            var reqstr = JSON.stringify(reqres);
 
             admin.initializeApp({
                 credential: admin.credential.cert(serviceAccount)
@@ -37,6 +37,6 @@ exports.setLoc = functions.https.onRequest((req, res) => {
             }, {
                 merge: true
             });
-            res.status(200).send("Success \n \n Received: \n "+ JSON.stringify(reqres) );
+            res.status(200).send("Received: \n "+ JSON.stringify(reqres) );
             return "200";
         });
