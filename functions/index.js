@@ -10,7 +10,7 @@ exports.setLoc = functions.https.onRequest((req, res) => {
                 "catId": q.catId,
                 "location": q.location,
                 "locId": q.locId
-            }
+            };
             
             var reqstr = JSON.stringify(reqres);
 
