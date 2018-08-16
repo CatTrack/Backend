@@ -93,7 +93,7 @@ exports.newLoc = functions.https.onRequest((req, res) => {
         "General Location": reqres.genLoc,
         "Specific Location": reqres.specLoc,
         "Identifier": reqres.locId
-    }
+    };
 
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
