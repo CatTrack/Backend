@@ -66,7 +66,12 @@ exports.newCat = functions.https.onRequest((req, res) => {
     var db = admin.firestore();
 
     var addDoc = db.collection('users').doc(reqres.userId).collection('Cats').add(dataStuff).then(ref => {
-        res.status(200).send('Added document with ID: '+ ref.id);
+        var response = {
+            "Response Code": 201,
+            "Success": true,
+            "Document ID": ref.id
+        }
+        res.status(201).send(response);
     });
     return "200";
 })
