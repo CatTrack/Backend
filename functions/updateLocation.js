@@ -5,4 +5,4 @@ var serviceAccount = require("./servicekey.json");
 
 exports.setLoc = functions.https.onRequest((req, res) => {
     console.log("Fire")
-}
+});
