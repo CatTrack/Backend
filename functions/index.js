@@ -79,4 +79,34 @@ exports.newCat = functions.https.onRequest((req, res) => {
         res.status(201).send(response);
     });
     return "200";
-})
+});
+
+exports.newLoc = functions.https.onRequest((req, res) => {
+    var q = req.query;
+    var reqres = {
+        "userId": q.userId,
+        "genLoc": q.gLocation,
+        "specLoc": q.sLocation,
+        "locId": q.locId
+    };
+    var dataStuff = {
+        "General Location": reqres.genLoc,
+        "Specific Location": reqres.specLoc,
+        "Identifier": reqres.locId
+    }
+
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+    });
+    var db = admin.firestore();
+
+    var addDoc = db.collection('users').doc(reqres.userId).collection('Locations').add(dataStuff).then(ref => {
+        var response = {
+            "Response Code": 201,
+            "Success": true,
+            "Document ID": ref.id
+        };
+        res.status(201).send(response);
+    });
+    return "200";
+});
