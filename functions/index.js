@@ -102,3 +102,28 @@ exports.newLoc = functions.https.onRequest((req, res) => {
     });
     return "200";
 });
+
+// Update cat details
+exports.setCat = functions.https.onRequest((req, res) => {
+    var q = req.query;
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+    });
+    var db = admin.firestore();
+
+    var docRef = db.collection('users').doc(q.userId).collection('Cats').doc(q.catId);
+
+    var dataStuff = docRef.set({
+        "Identifier": q.catName,
+        "Photo URI": q.photoURI
+    }, {
+        merge: true
+    });
+    var response = {
+        "Response Code": 200,
+        "Success": true,
+        "Additional Info": "None"
+    };
+    res.status(200).send(response);
+    return "200";
+});
