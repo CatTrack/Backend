@@ -85,8 +85,8 @@ exports.newLoc = functions.https.onRequest((req, res) => {
     var q = req.query;
     var reqres = {
         "userId": q.userId,
-        "genLoc": q.gLocation,
-        "specLoc": q.sLocation,
+        "genLoc": q.genLoc,
+        "specLoc": q.specLoc,
         "locId": q.locId
     };
     var dataStuff = {
