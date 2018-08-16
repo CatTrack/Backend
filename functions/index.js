@@ -4,6 +4,7 @@ const admin = require("firebase-admin");
 var serviceAccount = require("./servicekey.json");
 var cDate = new Date();
 
+// Update cat location
 exports.setLoc = functions.https.onRequest((req, res) => {
     var q = req.query;
     var reqres = {
@@ -43,21 +44,17 @@ exports.setLoc = functions.https.onRequest((req, res) => {
     return "200";
 });
 
+// New Cat
 exports.newCat = functions.https.onRequest((req, res) => {
     var q = req.query;
-    var reqres = {
-        "userId": q.userId,
-        "catId": q.catId,
-        "location": q.location,
-        "locId": q.locId
-    };
     var dataStuff = {
         "Identifier": q.catId,
+        "Photo URI": q.photoURI,
         "Location": {
-            "General Location": reqres.location,
+            "General Location": q.location,
             "Specific Location": [{
                 "Specific Location": {
-                    "Location Identifier": reqres.locId,
+                    "Location Identifier": q.locId,
                     "Timestamps": [cDate]
                 }
             }]
@@ -70,7 +67,7 @@ exports.newCat = functions.https.onRequest((req, res) => {
 
     var db = admin.firestore();
 
-    var addDoc = db.collection('users').doc(reqres.userId).collection('Cats').add(dataStuff).then(ref => {
+    var addDoc = db.collection('users').doc(q.userId).collection('Cats').add(dataStuff).then(ref => {
         var response = {
             "Response Code": 201,
             "Success": true,
@@ -81,18 +78,13 @@ exports.newCat = functions.https.onRequest((req, res) => {
     return "200";
 });
 
+// New User Defined Location
 exports.newLoc = functions.https.onRequest((req, res) => {
     var q = req.query;
-    var reqres = {
-        "userId": q.userId,
-        "genLoc": q.genLoc,
-        "specLoc": q.specLoc,
-        "locId": q.locId
-    };
     var dataStuff = {
-        "General Location": reqres.genLoc,
-        "Specific Location": reqres.specLoc,
-        "Identifier": reqres.locId
+        "General Location": q.genLoc,
+        "Specific Location": q.specLoc,
+        "Identifier": q.locId
     };
 
     admin.initializeApp({
@@ -100,7 +92,7 @@ exports.newLoc = functions.https.onRequest((req, res) => {
     });
     var db = admin.firestore();
 
-    var addDoc = db.collection('users').doc(reqres.userId).collection('Locations').add(dataStuff).then(ref => {
+    var addDoc = db.collection('users').doc(q.userId).collection('Locations').add(dataStuff).then(ref => {
         var response = {
             "Response Code": 201,
             "Success": true,
