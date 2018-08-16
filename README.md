@@ -1,7 +1,8 @@
 # Backend
+
 The Node.js backend
 
-# Setup requirements
+## Setup requirements
 
 1) Run install.sh
 2) Generate Service Account key
