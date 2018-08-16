@@ -34,7 +34,12 @@ exports.setLoc = functions.https.onRequest((req, res) => {
     }, {
         merge: true
     });
-    res.status(200).send("Received: \n " + JSON.stringify(reqres));
+    var response = {
+        "Response Code": 200,
+        "Success": true,
+        "Additional Info": "None"
+    };
+    res.status(200).send(response);
     return "200";
 });
 
@@ -70,7 +75,7 @@ exports.newCat = functions.https.onRequest((req, res) => {
             "Response Code": 201,
             "Success": true,
             "Document ID": ref.id
-        }
+        };
         res.status(201).send(response);
     });
     return "200";
