@@ -51,10 +51,10 @@ exports.newCat = functions.https.onRequest((req, res) => {
         "Identifier": q.catId,
         "Photo URI": q.photoURI,
         "Location": {
-            "General Location": "",
+            "General Location": "undefined",
             "Specific Location": [{
                 "Specific Location": {
-                    "Location Identifier": "",
+                    "Location Identifier": "undefined",
                     "Timestamps": [cDate]
                 }
             }]
@@ -158,4 +158,5 @@ exports.getCatLocation = functions.https.onRequest((req, res) => {
 
 exports.simpleReturn = functions.https.onRequest((req, res) => {
     res.status(200).send(res);
+    return "200";
 });
