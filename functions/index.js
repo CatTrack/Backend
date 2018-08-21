@@ -127,3 +127,26 @@ exports.setCat = functions.https.onRequest((req, res) => {
     res.status(200).send(response);
     return "200";
 });
+
+exports.getCats = function(userID, callback){
+    let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
+    request(endpoint + userID + "/Cats", function (error, response, body) {
+        body = JSON.parse(body)
+        var cats = [];
+        body.documents.forEach(cat => {
+            cats.push(cat.fields.Identifier.stringValue);
+        });
+        callback(null, cats);
+        return "200";
+    });
+}
+
+exports.getCatLocation = function(userID, catID, callback){
+    let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
+    request(endpoint + userID + "/Cats/" + catID, function (error, response, body) {
+        generalLocation = JSON.parse(body).fields.Location.mapValue.fields["General Location"]["stringValue"]
+        specificLocation = JSON.parse(body).fields.Location.mapValue.fields["Specific Location"]["mapValue"]
+        callback(null, {"General Location":generalLocation, "Specific Location": specificLocation});
+        return "200";
+    });
+}
