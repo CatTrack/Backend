@@ -1,6 +1,7 @@
 // Required libraries
 const functions = require('firebase-functions');
 const admin = require("firebase-admin");
+const request = require("request");
 var serviceAccount = require("./servicekey.json");
 var cDate = new Date();
 
@@ -31,7 +32,7 @@ exports.setLoc = functions.https.onRequest((req, res) => {
             "General Location": reqres.location,
             "Specific Location": [{
                 "Specific Location": {
-                    "Location IDentifier": reqres.locID,
+                    "Location Identifier": reqres.locID,
                     "Timestamps": [cDate]
                 }
             }]
@@ -52,13 +53,13 @@ exports.setLoc = functions.https.onRequest((req, res) => {
 exports.newCat = functions.https.onRequest((req, res) => {
     var q = req.body;
     var catData = {
-        "IDentifier": q.catID,
+        "Identifier": q.catID,
         "Photo URI": q.photoURI,
         "Location": {
             "General Location": "",
             "Specific Location": [{
                 "Specific Location": {
-                    "Location IDentifier": "",
+                    "Location Identifier": "",
                     "Timestamps": [cDate]
                 }
             }]
@@ -77,7 +78,7 @@ exports.newCat = functions.https.onRequest((req, res) => {
             "Success": true,
             "Document ID": ref.id
         };
-        res.status(201).send(response + addDoc);
+        res.status(201).send(response);
     });
     return "200";
 });
@@ -88,7 +89,7 @@ exports.newLoc = functions.https.onRequest((req, res) => {
     var catData = {
         "General Location": q.genLoc,
         "Specific Location": q.specLoc,
-        "IDentifier": q.locID
+        "Identifier": q.locID
     };
 
     /* admin.initializeApp({
@@ -118,7 +119,7 @@ exports.setCat = functions.https.onRequest((req, res) => {
     var docRef = db.collection('users').doc(q.userID).collection('Cats').doc(q.catID);
 
     var catData = docRef.set({
-        "IDentifier": q.catName,
+        "Identifier": q.catName,
         "Photo URI": q.photoURI
     }, {
         merge: true
@@ -140,7 +141,7 @@ exports.getCats = functions.https.onRequest((req, res) => {
         body = JSON.parse(body);
         var cats = [];
         body.documents.forEach(cat => {
-            cats.push(cat.fields.IDentifier.stringValue);
+            cats.push(cat.fields.Identifier.stringValue);
         });
         res.status(200).send(cats);
         return "200";
