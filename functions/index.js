@@ -51,10 +51,10 @@ exports.newCat = functions.https.onRequest((req, res) => {
         "Identifier": q.catId,
         "Photo URI": q.photoURI,
         "Location": {
-            "General Location": q.location,
+            "General Location": "",
             "Specific Location": [{
                 "Specific Location": {
-                    "Location Identifier": q.locId,
+                    "Location Identifier": "",
                     "Timestamps": [cDate]
                 }
             }]
