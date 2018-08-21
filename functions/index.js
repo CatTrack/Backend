@@ -12,10 +12,10 @@ admin.initializeApp({
 exports.setLoc = functions.https.onRequest((req, res) => {
     var q = req.body;
     var reqres = {
-        "userId": q.userId,
-        "catId": q.catId,
+        "userID": q.userID,
+        "catID": q.catID,
         "location": q.location,
-        "locId": q.locId
+        "locID": q.locID
     };
 
     /* admin.initializeApp({
@@ -24,14 +24,14 @@ exports.setLoc = functions.https.onRequest((req, res) => {
 
     var db = admin.firestore();
 
-    var docRef = db.collection('users').doc(reqres.userId).collection('Cats').doc(reqres.catId);
+    var docRef = db.collection('users').doc(reqres.userID).collection('Cats').doc(reqres.catID);
 
     var catData = docRef.set({
         "Location": {
             "General Location": reqres.location,
             "Specific Location": [{
                 "Specific Location": {
-                    "Location Identifier": reqres.locId,
+                    "Location IDentifier": reqres.locID,
                     "Timestamps": [cDate]
                 }
             }]
@@ -52,13 +52,13 @@ exports.setLoc = functions.https.onRequest((req, res) => {
 exports.newCat = functions.https.onRequest((req, res) => {
     var q = req.body;
     var catData = {
-        "Identifier": q.catId,
+        "IDentifier": q.catID,
         "Photo URI": q.photoURI,
         "Location": {
             "General Location": "",
             "Specific Location": [{
                 "Specific Location": {
-                    "Location Identifier": "",
+                    "Location IDentifier": "",
                     "Timestamps": [cDate]
                 }
             }]
@@ -71,13 +71,13 @@ exports.newCat = functions.https.onRequest((req, res) => {
 
     var db = admin.firestore();
 
-    var addDoc = db.collection('users').doc(q.userId).collection('Cats').add(catData).then(ref => {
+    var addDoc = db.collection('users').doc(q.userID).collection('Cats').add(catData).then(ref => {
         var response = {
             "Response Code": 201,
             "Success": true,
             "Document ID": ref.id
         };
-        res.status(201).send(response);
+        res.status(201).send(response + addDoc);
     });
     return "200";
 });
@@ -88,7 +88,7 @@ exports.newLoc = functions.https.onRequest((req, res) => {
     var catData = {
         "General Location": q.genLoc,
         "Specific Location": q.specLoc,
-        "Identifier": q.locId
+        "IDentifier": q.locID
     };
 
     /* admin.initializeApp({
@@ -96,7 +96,7 @@ exports.newLoc = functions.https.onRequest((req, res) => {
     });*/
     var db = admin.firestore();
 
-    var addDoc = db.collection('users').doc(q.userId).collection('Locations').add(catData).then(ref => {
+    var addDoc = db.collection('users').doc(q.userID).collection('Locations').add(catData).then(ref => {
         var response = {
             "Response Code": 201,
             "Success": true,
@@ -115,10 +115,10 @@ exports.setCat = functions.https.onRequest((req, res) => {
     });*/
     var db = admin.firestore();
 
-    var docRef = db.collection('users').doc(q.userId).collection('Cats').doc(q.catId);
+    var docRef = db.collection('users').doc(q.userID).collection('Cats').doc(q.catID);
 
     var catData = docRef.set({
-        "Identifier": q.catName,
+        "IDentifier": q.catName,
         "Photo URI": q.photoURI
     }, {
         merge: true
@@ -140,7 +140,7 @@ exports.getCats = functions.https.onRequest((req, res) => {
         body = JSON.parse(body);
         var cats = [];
         body.documents.forEach(cat => {
-            cats.push(cat.fields.Identifier.stringValue);
+            cats.push(cat.fields.IDentifier.stringValue);
         });
         res.status(200).send(cats);
         return "200";
@@ -161,7 +161,7 @@ exports.getCatLocation = functions.https.onRequest((req, res) => {
 });
 
 exports.simpleReturn = functions.https.onRequest((req, res) => {
-    var body = req.body
-    res.status(200).send(body);
+    var body = req.body;
+    res.status(200).send(body.userID);
     return "200";
 });
