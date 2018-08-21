@@ -128,6 +128,7 @@ exports.setCat = functions.https.onRequest((req, res) => {
     return "200";
 });
 
+// Get Cats
 exports.getCats = function(userID, callback){
     let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
     request(endpoint + userID + "/Cats", function (error, response, body) {
@@ -141,6 +142,7 @@ exports.getCats = function(userID, callback){
     });
 }
 
+// Get cat location
 exports.getCatLocation = function(userID, catID, callback){
     let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
     request(endpoint + userID + "/Cats/" + catID, function (error, response, body) {
