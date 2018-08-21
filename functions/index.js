@@ -4,9 +4,13 @@ const admin = require("firebase-admin");
 var serviceAccount = require("./servicekey.json");
 var cDate = new Date();
 
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
+
 // Update cat location
 exports.setLoc = functions.https.onRequest((req, res) => {
-    var q = req.query;
+    var q = req.body;
     var reqres = {
         "userId": q.userId,
         "catId": q.catId,
@@ -14,15 +18,15 @@ exports.setLoc = functions.https.onRequest((req, res) => {
         "locId": q.locId
     };
 
-    admin.initializeApp({
+    /* admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
-    });
+    });*/
 
     var db = admin.firestore();
 
     var docRef = db.collection('users').doc(reqres.userId).collection('Cats').doc(reqres.catId);
 
-    var dataStuff = docRef.set({
+    var catData = docRef.set({
         "Location": {
             "General Location": reqres.location,
             "Specific Location": [{
@@ -46,28 +50,28 @@ exports.setLoc = functions.https.onRequest((req, res) => {
 
 // New Cat
 exports.newCat = functions.https.onRequest((req, res) => {
-    var q = req.query;
-    var dataStuff = {
+    var q = req.body;
+    var catData = {
         "Identifier": q.catId,
         "Photo URI": q.photoURI,
         "Location": {
-            "General Location": "blank",
+            "General Location": "",
             "Specific Location": [{
                 "Specific Location": {
-                    "Location Identifier": "blank",
+                    "Location Identifier": "",
                     "Timestamps": [cDate]
                 }
             }]
         }
     };
 
-    admin.initializeApp({
+    /* admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
-    });
+    });*/
 
     var db = admin.firestore();
 
-    var addDoc = db.collection('users').doc(q.userId).collection('Cats').add(dataStuff).then(ref => {
+    var addDoc = db.collection('users').doc(q.userId).collection('Cats').add(catData).then(ref => {
         var response = {
             "Response Code": 201,
             "Success": true,
@@ -80,19 +84,19 @@ exports.newCat = functions.https.onRequest((req, res) => {
 
 // New User Defined Location
 exports.newLoc = functions.https.onRequest((req, res) => {
-    var q = req.query;
-    var dataStuff = {
+    var q = req.body;
+    var catData = {
         "General Location": q.genLoc,
         "Specific Location": q.specLoc,
         "Identifier": q.locId
     };
 
-    admin.initializeApp({
+    /* admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
-    });
+    });*/
     var db = admin.firestore();
 
-    var addDoc = db.collection('users').doc(q.userId).collection('Locations').add(dataStuff).then(ref => {
+    var addDoc = db.collection('users').doc(q.userId).collection('Locations').add(catData).then(ref => {
         var response = {
             "Response Code": 201,
             "Success": true,
@@ -105,15 +109,15 @@ exports.newLoc = functions.https.onRequest((req, res) => {
 
 // Update cat details
 exports.setCat = functions.https.onRequest((req, res) => {
-    var q = req.query;
-    admin.initializeApp({
+    var q = req.body;
+    /*admin.initializeApp({
         credential: admin.credential.cert(serviceAccount)
-    });
+    });*/
     var db = admin.firestore();
 
     var docRef = db.collection('users').doc(q.userId).collection('Cats').doc(q.catId);
 
-    var dataStuff = docRef.set({
+    var catData = docRef.set({
         "Identifier": q.catName,
         "Photo URI": q.photoURI
     }, {
@@ -130,7 +134,7 @@ exports.setCat = functions.https.onRequest((req, res) => {
 
 // Get Cats
 exports.getCats = functions.https.onRequest((req, res) => {
-    var userID = req.query.userID;
+    var userID = req.body.userID;
     let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
     request(endpoint + userID + "/Cats", function (error, response, body) {
         body = JSON.parse(body);
@@ -145,8 +149,8 @@ exports.getCats = functions.https.onRequest((req, res) => {
 
 // Get cat location
 exports.getCatLocation = functions.https.onRequest((req, res) => {
-    var userID = req.query.userID;
-    var catID = req.query.catID;
+    var userID = req.body.userID;
+    var catID = req.body.catID;
     let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
     request(endpoint + userID + "/Cats/" + catID, function (error, response, body) {
         generalLocation = JSON.parse(body).fields.Location.mapValue.fields["General Location"]["stringValue"];
@@ -157,6 +161,7 @@ exports.getCatLocation = functions.https.onRequest((req, res) => {
 });
 
 exports.simpleReturn = functions.https.onRequest((req, res) => {
-    res.status(200).send(res);
+    var body = req.body
+    res.status(200).send(body);
     return "200";
 });
