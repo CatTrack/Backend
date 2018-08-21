@@ -53,7 +53,7 @@ exports.setLoc = functions.https.onRequest((req, res) => {
 exports.newCat = functions.https.onRequest((req, res) => {
     var q = req.body;
     var catData = {
-        "Identifier": q.catID,
+        "Identifier": q.catName,
         "Photo URI": q.photoURI,
         "Location": {
             "General Location": "",
@@ -136,8 +136,8 @@ exports.setCat = functions.https.onRequest((req, res) => {
 // Get Cats
 exports.getCats = functions.https.onRequest((req, res) => {
     var userID = req.body.userID;
-    let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
-    request(endpoint + userID + "/Cats", function (error, response, body) {
+    let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/" + userID + "/Cats";
+    request(endpoint, function (error, response, body) {
         body = JSON.parse(body);
         var cats = [];
         body.documents.forEach(cat => {
