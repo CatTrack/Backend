@@ -129,7 +129,7 @@ exports.setCat = functions.https.onRequest((req, res) => {
 });
 
 // Get Cats
-exports.getCats = function.https.onRequest(req, res){
+exports.getCats = functions.https.onRequest((req, res) => {
     var userID = req.query.userID;
     let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
     request(endpoint + userID + "/Cats", function (error, response, body) {
@@ -144,14 +144,18 @@ exports.getCats = function.https.onRequest(req, res){
 }
 
 // Get cat location
-exports.getCatLocation = function.https.onRequest(req, callback){
+exports.getCatLocation = functions.https.onRequest((req, res) => {
     var userID = req.query.userID;
     var catID = req.query.catID;
     let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
     request(endpoint + userID + "/Cats/" + catID, function (error, response, body) {
         generalLocation = JSON.parse(body).fields.Location.mapValue.fields["General Location"]["stringValue"]
         specificLocation = JSON.parse(body).fields.Location.mapValue.fields["Specific Location"]["mapValue"]
-        callback(null, {"General Location":generalLocation, "Specific Location": specificLocation});
+        res.status(200).send({"General Location":generalLocation, "Specific Location": specificLocation});
         return "200";
     });
-}
+});
+
+exports.simpleReturn = functions.https.onRequest((req, res) => {
+    res.status(200).send(res);
+});
