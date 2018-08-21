@@ -129,7 +129,8 @@ exports.setCat = functions.https.onRequest((req, res) => {
 });
 
 // Get Cats
-exports.getCats = function(userID, callback){
+exports.getCats = function.https.onRequest(req, res){
+    var userID = req.query.userID;
     let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
     request(endpoint + userID + "/Cats", function (error, response, body) {
         body = JSON.parse(body)
@@ -137,13 +138,15 @@ exports.getCats = function(userID, callback){
         body.documents.forEach(cat => {
             cats.push(cat.fields.Identifier.stringValue);
         });
-        callback(null, cats);
+        res.status(200).send(cats);
         return "200";
     });
 }
 
 // Get cat location
-exports.getCatLocation = function(userID, catID, callback){
+exports.getCatLocation = function.https.onRequest(req, callback){
+    var userID = req.query.userID;
+    var catID = req.query.catID;
     let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
     request(endpoint + userID + "/Cats/" + catID, function (error, response, body) {
         generalLocation = JSON.parse(body).fields.Location.mapValue.fields["General Location"]["stringValue"]
