@@ -134,7 +134,7 @@ exports.setCat = functions.https.onRequest((req, res) => {
 
 // Get Cats
 exports.getCats = functions.https.onRequest((req, res) => {
-    var userID = req.body.userID;
+    var userID = req.query.userID;
     let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/" + userID + "/Cats";
     request(endpoint, function (error, response, body) {
         body = JSON.parse(body);
@@ -150,8 +150,8 @@ exports.getCats = functions.https.onRequest((req, res) => {
 
 // Get cat location
 exports.getCatLocation = functions.https.onRequest((req, res) => {
-    var userID = req.body.userID;
-    var catID = req.body.catID;
+    var userID = req.query.userID;
+    var catID = req.query.catID;
     let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
     request(endpoint + userID + "/Cats/" + catID, function (error, response, body) {
         body = JSON.parse(body);
