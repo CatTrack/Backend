@@ -88,8 +88,7 @@ exports.newLoc = functions.https.onRequest((req, res) => {
     var q = req.body;
     var catData = {
         "General Location": q.genLoc,
-        "Specific Location": q.specLoc,
-        "Identifier": q.locID
+        "Specific Location": q.specLoc
     };
 
     /* admin.initializeApp({
@@ -139,6 +138,7 @@ exports.getCats = functions.https.onRequest((req, res) => {
     let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/" + userID + "/Cats";
     request(endpoint, function (error, response, body) {
         body = JSON.parse(body);
+        console.log(body);
         var cats = [];
         body.documents.forEach(cat => {
             cats.push(cat.fields.Identifier.stringValue);
@@ -154,8 +154,9 @@ exports.getCatLocation = functions.https.onRequest((req, res) => {
     var catID = req.body.catID;
     let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
     request(endpoint + userID + "/Cats/" + catID, function (error, response, body) {
-        generalLocation = JSON.parse(body).fields.Location.mapValue.fields["General Location"]["stringValue"];
-        specificLocation = JSON.parse(body).fields.Location.mapValue.fields["Specific Location"]["mapValue"];
+        body = JSON.parse(body);
+        generalLocation = body.fields.Location.mapValue.fields["General Location"]["stringValue"];
+        specificLocation = body.fields.Location.mapValue.fields["Specific Location"]["mapValue"];
         res.status(200).send({"General Location":generalLocation, "Specific Location": specificLocation});
         return "200";
     });
