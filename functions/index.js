@@ -53,7 +53,7 @@ exports.setLoc = functions.https.onRequest((req, res) => {
 exports.newCat = functions.https.onRequest((req, res) => {
     var q = req.body;
     var catData = {
-        "Identifier": q.catID,
+        "Identifier": q.catName,
         "Photo URI": q.photoURI,
         "Location": {
             "General Location": "",
@@ -88,8 +88,7 @@ exports.newLoc = functions.https.onRequest((req, res) => {
     var q = req.body;
     var catData = {
         "General Location": q.genLoc,
-        "Specific Location": q.specLoc,
-        "Identifier": q.locID
+        "Specific Location": q.specLoc
     };
 
     /* admin.initializeApp({
@@ -134,11 +133,13 @@ exports.setCat = functions.https.onRequest((req, res) => {
 });
 
 // Get Cats
-exports.getCats = functions.https.onRequest((req, res) => {
-    var userID = req.body.userID;
-    let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
-    request(endpoint + userID + "/Cats", function (error, response, body) {
+exports.listCats = functions.https.onRequest((req, res) => {
+    var userID = req.query.userID;
+    console.log(userID);
+    let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/" + userID + "/Cats";
+    request(endpoint, function (error, response, body) {
         body = JSON.parse(body);
+        console.log(body);
         var cats = [];
         body.documents.forEach(cat => {
             cats.push(cat.fields.Identifier.stringValue);
@@ -150,12 +151,13 @@ exports.getCats = functions.https.onRequest((req, res) => {
 
 // Get cat location
 exports.getCatLocation = functions.https.onRequest((req, res) => {
-    var userID = req.body.userID;
-    var catID = req.body.catID;
+    var userID = req.query.userID;
+    var catID = req.query.catID;
     let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
     request(endpoint + userID + "/Cats/" + catID, function (error, response, body) {
-        generalLocation = JSON.parse(body).fields.Location.mapValue.fields["General Location"]["stringValue"];
-        specificLocation = JSON.parse(body).fields.Location.mapValue.fields["Specific Location"]["mapValue"];
+        body = JSON.parse(body);
+        generalLocation = body.fields.Location.mapValue.fields["General Location"]["stringValue"];
+        specificLocation = body.fields.Location.mapValue.fields["Specific Location"]["mapValue"];
         res.status(200).send({"General Location":generalLocation, "Specific Location": specificLocation});
         return "200";
     });
