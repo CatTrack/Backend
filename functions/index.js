@@ -133,8 +133,9 @@ exports.setCat = functions.https.onRequest((req, res) => {
 });
 
 // Get Cats
-exports.getCats = functions.https.onRequest((req, res) => {
+exports.listCats = functions.https.onRequest((req, res) => {
     var userID = req.query.userID;
+    console.log(userID);
     let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/" + userID + "/Cats";
     request(endpoint, function (error, response, body) {
         body = JSON.parse(body);
