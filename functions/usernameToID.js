@@ -14,4 +14,4 @@ module.exports.usernameToID = function(targetUsername, callback){
         });
 
     });
-}
+};

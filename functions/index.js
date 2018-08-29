@@ -2,6 +2,7 @@
 const functions = require('firebase-functions');
 const admin = require("firebase-admin");
 const request = require("request");
+const cors = require('cors')({origin: true});
 var serviceAccount = require("./servicekey.json");
 var cDate = new Date();
 
@@ -134,6 +135,12 @@ exports.setCat = functions.https.onRequest((req, res) => {
 
 // Get Cats
 exports.listCats = functions.https.onRequest((req, res) => {
+    if (req.method === `OPTIONS`) {
+        res.set('Access-Control-Allow-Origin', 'https://cat-track.herokuapp.com/')
+           .set('Access-Control-Allow-Methods', 'GET, POST')
+           .status(200);
+           return;
+    }    
     var userID = req.query.userID;
     console.log(userID);
     let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/" + userID + "/Cats";
@@ -149,6 +156,23 @@ exports.listCats = functions.https.onRequest((req, res) => {
     });
 });
 
+// Get advanced info
+exports.getCatsAdv = functions.https.onRequest((req, res) => {
+    if (req.method === `OPTIONS`) {
+        res.set('Access-Control-Allow-Origin', 'https://cat-track.herokuapp.com/')
+           .set('Access-Control-Allow-Methods', 'GET, POST')
+           .status(200);
+           return;
+    }    
+    var userID = req.query.userID;
+    let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
+    request(endpoint + userID + "/Cats/" , function (error, response, body) {
+        body = JSON.parse(body);
+        res.status(200).send(body);
+        return "200";
+    });
+});
+
 // Get cat location
 exports.getCatLocation = functions.https.onRequest((req, res) => {
     var userID = req.query.userID;
@@ -156,8 +180,9 @@ exports.getCatLocation = functions.https.onRequest((req, res) => {
     let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
     request(endpoint + userID + "/Cats/" + catID, function (error, response, body) {
         body = JSON.parse(body);
-        generalLocation = body.fields.Location.mapValue.fields["General Location"]["stringValue"];
-        specificLocation = body.fields.Location.mapValue.fields["Specific Location"]["mapValue"];
+        catName = body.fields.Location.mapValue.fields.Identifier.stringValue;
+        generalLocation = body.fields.Location.mapValue.fields["General Location"].stringValue;
+        specificLocation = body.fields.Location.mapValue.fields["Specific Location"].mapValue;
         res.status(200).send({"General Location":generalLocation, "Specific Location": specificLocation});
         return "200";
     });
