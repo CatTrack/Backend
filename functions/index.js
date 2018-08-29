@@ -158,18 +158,21 @@ exports.listCats = functions.https.onRequest((req, res) => {
 
 // Get advanced info
 exports.getCatsAdv = functions.https.onRequest((req, res) => {
-    if (req.method === `OPTIONS`) {
-        res.set('Access-Control-Allow-Origin', 'https://cat-track.herokuapp.com/')
-           .set('Access-Control-Allow-Methods', 'GET, POST')
-           .status(200);
-           return;
-    }    
-    var userID = req.query.userID;
-    let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
-    request(endpoint + userID + "/Cats/" , function (error, response, body) {
-        body = JSON.parse(body);
-        res.status(200).send(body);
-        return "200";
+    cors(req, res, () => {
+        if (req.method === `OPTIONS`) {
+            res.set('Access-Control-Allow-Origin', 'https://cat-track.herokuapp.com/')
+            .set('Access-Control-Allow-Methods', 'GET, POST')
+            .status(200);
+            return;
+        }    
+        var userID = req.query.userID;
+        let endpoint = "https://firestore.googleapis.com/v1beta1/projects/te-cattrack/databases/(default)/documents/users/";
+        request(endpoint + userID + "/Cats/" , function (error, response, body) {
+            body = JSON.parse(body);
+            res.status(200).send(body);
+            return "200";
+        });
+
     });
 });
 
